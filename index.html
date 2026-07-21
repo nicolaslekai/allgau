@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Allgäu Environment — Weather, Lakes & Climate Data for the Allgäu</title>
+<meta name="description" content="Current conditions, forecasts and long-term environmental trends for the Allgäu region: weather, lake temperatures, groundwater, air quality.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top">Allgäu<span>Environment</span></a>
+    <div class="nav-links">
+      <a href="#now">Now</a>
+      <a href="#forecast">Forecast</a>
+      <a href="#water">Lakes &amp; Water</a>
+      <a href="#webcams">Webcams</a>
+      <a href="#trends">Trends</a>
+      <a href="#about">About</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-kicker">Southern Bavaria · 47°N 10°E</p>
+    <h1>The Allgäu's environment,<br>in one place.</h1>
+    <p class="hero-sub">Current conditions, forecasts and long-term records — weather, lakes,
+    groundwater and air quality for the Allgäu region, from public official sources.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#now">Current conditions</a>
+      <a class="btn btn-ghost" href="#trends">Long-term trends</a>
+    </div>
+  </div>
+  <p class="hero-credit">Nebelhorn, Oberstdorf — CC0, Wikimedia Commons</p>
+</header>
+
+<main>
+
+<!-- ============ CURRENT CONDITIONS ============ -->
+<section class="section" id="now">
+  <div class="section-head">
+    <h2>Right now</h2>
+    <p class="section-sub">Live data · Open-Meteo (DWD model) &amp; CAMS air quality · updated <span id="updated-at">—</span></p>
+  </div>
+
+  <div class="location-switch" id="location-switch" role="tablist" aria-label="Location">
+    <button class="chip active" data-loc="kempten" role="tab">Kempten</button>
+    <button class="chip" data-loc="oberstdorf" role="tab">Oberstdorf</button>
+    <button class="chip" data-loc="fuessen" role="tab">Füssen</button>
+  </div>
+
+  <div class="cards" id="weather-cards" aria-live="polite">
+    <div class="card card-temp skeleton"><p class="card-label">Loading live data…</p></div>
+  </div>
+
+  <div class="cards cards-air" id="air-cards" aria-live="polite"></div>
+  <p class="fine-print">Weather: Open-Meteo forecast API (DWD ICON model). Air quality: CAMS Europe via Open-Meteo. Values are model/grid data for the selected town, not a single station reading.</p>
+</section>
+
+<!-- ============ FORECAST ============ -->
+<section class="section section-alt" id="forecast">
+  <div class="section-head">
+    <h2>Next 7 days</h2>
+    <p class="section-sub">Live forecast for <span id="forecast-loc">Kempten</span></p>
+  </div>
+  <div class="chart-wrap">
+    <canvas id="forecast-chart" height="110"></canvas>
+  </div>
+  <div class="forecast-strip" id="forecast-strip"></div>
+</section>
+
+<!-- ============ LAKES & WATER ============ -->
+<section class="section" id="water">
+  <div class="section-head">
+    <h2>Lakes &amp; water</h2>
+    <p class="section-sub">Live water temperatures and levels from the Bavarian Hydrological Service (GKD), 15-minute values</p>
+  </div>
+
+  <div class="lake-grid" id="lake-grid" aria-live="polite">
+    <div class="card skeleton"><p class="card-label">Loading lake data…</p></div>
+  </div>
+
+  <div class="live-banner">
+    <strong>Live via GKD Bayern.</strong> Gauged lakes show real 15-minute measurements.
+    Lakes without a public continuous gauge are listed with their key figures — the archive
+    records every GKD feed from day one, and weekly LfU bathing temperatures for the rest.
+  </div>
+
+  <div class="feature-row">
+    <figure class="feature-img">
+      <img src="images/illustrations/allgau_groundwater_00001_.png" alt="Illustration of a groundwater monitoring well in an Alpine meadow" loading="lazy">
+    </figure>
+    <div class="feature-text">
+      <h3>Groundwater</h3>
+      <p>Groundwater levels are among the most important — and least visible — environmental
+      indicators in the Alpine foreland. Dry winters and shrinking snowpack show up here years
+      later. The platform will track LfU monitoring wells across the region and make long
+      trends explorable.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WEBCAMS ============ -->
+<section class="section section-alt" id="webcams">
+  <div class="section-head">
+    <h2>Live webcams</h2>
+    <p class="section-sub">Current views across the Allgäu · refreshed <span id="cams-updated">—</span> · images: Foto-Webcam.eu</p>
+  </div>
+
+  <div class="webcam-grid" id="webcam-grid"></div>
+
+  <div class="feature-row">
+    <figure class="feature-img">
+      <img src="images/neuschwanstein_winter.jpg" alt="Neuschwanstein Castle above Schwangau in winter snow" loading="lazy">
+      <figcaption>Neuschwanstein in winter — the Tegelberg webcam above shows this view live</figcaption>
+    </figure>
+    <div class="feature-text">
+      <h3>Every season, on record</h3>
+      <p>The webcams don't just show the current weather — their operators archive every frame.
+      Combined with the measurements we record, each season leaves a complete picture:
+      first snow on the peaks, ice on the lakes, the first warm day at the Forggensee.</p>
+    </div>
+  </div>
+
+  <p class="fine-print">Webcam images courtesy of <a href="https://www.foto-webcam.eu/" target="_blank" rel="noopener">Foto-Webcam.eu</a>,
+  who permit free embedding with attribution. Each image links to its full-resolution archive page,
+  where hourly and daily time-lapses are available.</p>
+</section>
+
+<!-- ============ TRENDS ============ -->
+<section class="section section-dark" id="trends">
+  <div class="section-head">
+    <h2>Long-term trends</h2>
+    <p class="section-sub">Why the archive matters</p>
+  </div>
+
+  <div class="trend-grid">
+    <div class="trend-text">
+      <p>Single days tell you whether to pack a swimsuit. <strong>Decades tell you what's
+      happening to the region.</strong></p>
+      <p>This platform continuously records every measurement it displays. Over the coming
+      years that becomes the most comprehensive open dataset of environmental conditions
+      in the Allgäu — cleaned, unified across sources, and free to download for research,
+      journalism and education.</p>
+      <ul class="trend-list">
+        <li>Annual mean temperature shift vs. 1961–1990 baseline</li>
+        <li>Lake warming and earlier stratification</li>
+        <li>Groundwater level trends after low-snow winters</li>
+        <li>Vegetation (NDVI) and snow-cover change from satellite imagery</li>
+      </ul>
+    </div>
+    <figure class="feature-img">
+      <img src="images/illustrations/allgau_ndvi_00001_.png" alt="Illustration of satellite vegetation monitoring over the Alps" loading="lazy">
+      <figcaption>Vegetation monitoring from Sentinel-2 imagery</figcaption>
+    </figure>
+  </div>
+
+  <div class="chart-wrap chart-dark">
+    <p class="chart-title">Mean July temperature, illustrative trend (demo data)</p>
+    <canvas id="trend-chart" height="90"></canvas>
+  </div>
+  <p class="fine-print">Demo series for layout purposes. The live archive will backfill decades of
+  DWD Climate Data Center records, then grow by continuous recording.</p>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="section" id="about">
+  <div class="section-head">
+    <h2>Sources &amp; approach</h2>
+    <p class="section-sub">Everything on this page comes from public, official data</p>
+  </div>
+
+  <div class="source-grid">
+    <div class="source"><h4>Weather &amp; climate</h4><p>DWD Open Data · DWD Climate Data Center · Open-Meteo</p></div>
+    <div class="source"><h4>Lakes &amp; groundwater</h4><p>Bavarian Hydrological Service (GKD) · LfU Bayern</p></div>
+    <div class="source"><h4>Air quality</h4><p>Umweltbundesamt · LfU Bayern · CAMS Europe</p></div>
+    <div class="source"><h4>Webcams</h4><p>Foto-Webcam.eu network (embedded with attribution)</p></div>
+    <div class="source"><h4>Fires &amp; vegetation</h4><p>NASA FIRMS · Copernicus Sentinel-2 · Copernicus Land</p></div>
+  </div>
+
+  <div class="feature-row">
+    <figure class="feature-img">
+      <img src="images/illustrations/allgau_weather_station_00001_.png" alt="Illustration of a weather station in an Alpine pasture" loading="lazy">
+    </figure>
+    <div class="feature-text">
+      <h3>How it works</h3>
+      <ol class="how-list">
+        <li><strong>Collect</strong> — scheduled jobs pull from public APIs and open-data portals</li>
+        <li><strong>Store</strong> — every reading lands in a time-series archive</li>
+        <li><strong>Present</strong> — current conditions for everyone, depth and downloads for researchers</li>
+      </ol>
+      <p class="fine-print">Photos: Wikimedia Commons, CC0 (see <code>images/free/ATTRIBUTION.txt</code>).
+      Section illustrations: AI-generated for this project.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <p><strong>Allgäu Environment</strong> — an open project. Model data via Open-Meteo, lake gauges via GKD Bayern,
+  webcam images via Foto-Webcam.eu, photos as credited.</p>
+  <p class="fine-print">Not an official warning service. For weather warnings always consult the <a href="https://www.dwd.de/">DWD</a>.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

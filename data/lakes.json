@@ -1,0 +1,44 @@
+{
+  "fetched_at": "2026-07-21T23:27:00+00:00",
+  "source": "GKD Bayern (gkd.bayern.de)",
+  "lakes": {
+    "forggensee": {
+      "level": {
+        "value": 780.7,
+        "unit": "m ü. NN",
+        "measured_at": "22.07.2026 01:15"
+      }
+    },
+    "bodensee": {
+      "temp": {
+        "value": 24.0,
+        "unit": "°C",
+        "measured_at": "22.07.2026 01:15"
+      },
+      "level": {
+        "value": 394.92,
+        "unit": "m ü. NN",
+        "measured_at": "22.07.2026 01:15"
+      }
+    },
+    "rottachsee": {
+      "temp": {
+        "value": 23.0,
+        "unit": "°C",
+        "measured_at": "22.07.2026 01:15"
+      },
+      "level": {
+        "value": 849.2,
+        "unit": "m ü. NN",
+        "measured_at": "22.07.2026 01:15"
+      }
+    },
+    "gruentensee": {
+      "level": {
+        "value": 876.04,
+        "unit": "m ü. NN",
+        "measured_at": "22.07.2026 01:15"
+      }
+    }
+  }
+}

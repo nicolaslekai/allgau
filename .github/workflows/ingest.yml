@@ -1,0 +1,37 @@
+name: Ingest environmental data
+
+# GKD lake gauges every 30 minutes. Commits only when values changed.
+# This is the archive: every run appends to data/timeseries/lakes.csv.
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch: # manual run from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Fetch GKD lake data
+        run: python3 pipeline/fetch_lakes.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name "allgaeu-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "No new measurements."
+          else
+            git commit -m "data: GKD lake snapshot $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
