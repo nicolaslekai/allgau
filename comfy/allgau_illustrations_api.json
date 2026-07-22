@@ -73,5 +73,21 @@
   "42": {
     "class_type": "SaveImage",
     "inputs": { "images": ["41", 0], "filename_prefix": "allgau/hero_wireframe" }
+  },
+  "50": {
+    "class_type": "GeminiImage2Node",
+    "inputs": {
+      "prompt": "A cross-section of an Allgäu mountain slope showing the alpine tree line (Baumgrenze): dense spruce and larch forest in the valley giving way upslope to scattered wind-shaped solitary trees, then a belt of low krummholz mountain pine (Latschen), then bare alpine grassland and rock at the summit. A faint dashed altitude line marks the tree line with subtle elevation contour lines behind. Modern scientific illustration, clean flat vector style with soft gradients and fine line detail, deep-water blue and glacial turquoise palette, calm and precise, no text, no labels, no watermark",
+      "model": "gemini-3-pro-image-preview",
+      "seed": ["1", 0],
+      "aspect_ratio": "3:2",
+      "resolution": "2K",
+      "response_modalities": "IMAGE"
+    },
+    "_meta": { "title": "Illustration: tree line (Baumgrenze)" }
+  },
+  "51": {
+    "class_type": "SaveImage",
+    "inputs": { "images": ["50", 0], "filename_prefix": "allgau/treeline" }
   }
 }

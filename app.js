@@ -150,6 +150,12 @@ const WEBCAMS = [
   { slug: "balderschwang-kreuzle",title: "Kreuzle",                          place: "Balderschwang · view W" },
   { slug: "sibratsgfaell",        title: "Sibratsgfäll",                     place: "Bregenzerwald / W. Allgäu · view SE" },
   { slug: "hanuselhof",           title: "Hanusel Hof",                      place: "Amtzell / Wangen · view E" },
+  { slug: "scheibenhaus",         title: "Oberstdorf — Scheibenhaus",        place: "Oberstdorf · 815 m · view S" },
+  { slug: "jaegersberg",          title: "Oberstdorf — Jägersberg",          place: "Oberstdorf · 910 m · view S" },
+  { slug: "kueren",               title: "Kleinwalsertal — Wäldele",         place: "Hirschegg · 1,212 m · view SE" },
+  { slug: "tannheimertal",        title: "Tannheimer Tal",                   place: "Tannheim · 1,100 m · view E" },
+  { slug: "schwaerzenlifte",      title: "Schwärzenlifte — Eschach",         place: "Eschach / Oberallgäu · 1,068 m" },
+  { slug: "max-wild-arena",       title: "Isny — Felderhalde",               place: "Isny im Allgäu · 730 m · view NE" },
 ];
 
 const CAM_REFRESH_MS = 5 * 60 * 1000;
