@@ -1,0 +1,38 @@
+name: Extend climate trend archive
+
+# On the 3rd of each month, append the just-completed month to the ERA5
+# monthly temperature record (data/trends/*.monthly.json + CSV archive).
+# The script is idempotent: it only fetches months not yet recorded.
+
+on:
+  schedule:
+    - cron: "23 5 3 * *"   # 05:23 UTC on the 3rd — ERA5 has landed by then
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Extend monthly temperature record
+        run: python3 pipeline/backfill_trends.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name "allgaeu-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "No new months."
+          else
+            git commit -m "data: ERA5 monthly temperature update $(date -u +'%Y-%m')"
+            git push
+          fi

@@ -27,7 +27,10 @@
 </nav>
 
 <header class="hero" id="top">
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="hero-wire" aria-hidden="true"></div>
   <div class="hero-overlay"></div>
+  <div class="hero-reticle" aria-hidden="true"></div>
   <div class="hero-content">
     <p class="hero-kicker">Southern Bavaria · 47°N 10°E</p>
     <h1>The Allgäu's environment,<br>in one place.</h1>
@@ -163,11 +166,28 @@
   </div>
 
   <div class="chart-wrap chart-dark">
-    <p class="chart-title">Mean July temperature, illustrative trend (demo data)</p>
+    <p class="chart-title" id="trend-title">Loading the temperature record…</p>
+    <div class="location-switch month-switch" id="month-switch" role="tablist" aria-label="Month">
+      <button class="chip" data-month="1">Jan</button>
+      <button class="chip" data-month="2">Feb</button>
+      <button class="chip" data-month="3">Mar</button>
+      <button class="chip" data-month="4">Apr</button>
+      <button class="chip" data-month="5">May</button>
+      <button class="chip" data-month="6">Jun</button>
+      <button class="chip active" data-month="7">Jul</button>
+      <button class="chip" data-month="8">Aug</button>
+      <button class="chip" data-month="9">Sep</button>
+      <button class="chip" data-month="10">Oct</button>
+      <button class="chip" data-month="11">Nov</button>
+      <button class="chip" data-month="12">Dec</button>
+      <button class="chip" data-month="0">Year</button>
+    </div>
     <canvas id="trend-chart" height="90"></canvas>
+    <p class="trend-sub" id="trend-sub"></p>
   </div>
-  <p class="fine-print">Demo series for layout purposes. The live archive will backfill decades of
-  DWD Climate Data Center records, then grow by continuous recording.</p>
+  <p class="fine-print">Real measurements, not a demo: ERA5 reanalysis on a 0.25° grid, backfilled
+  from 1940 by the project's own ingestion pipeline and extended every month. The record follows
+  the location selected under <a href="#now">Now</a>.</p>
 </section>
 
 <!-- ============ ABOUT ============ -->

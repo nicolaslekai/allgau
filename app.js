@@ -42,6 +42,7 @@ const LAKES = [
   },
   {
     id: "bodensee", name: "Bodensee — Lindau gauge", alt: 395, area: 536, depth: 254,
+    img: "images/free/bodensee.jpg", imgAlt: "Lindau harbour on Lake Constance with the Mangturm tower",
     gkd: {
       temp:  "seen/wassertemperatur/iller_lech/lindau-20001001",
       level: "seen/wasserstand/iller_lech/lindau-20001001",
@@ -50,6 +51,7 @@ const LAKES = [
   },
   {
     id: "rottachsee", name: "Rottachsee", alt: 785, area: 2.96, depth: 25,
+    img: "images/free/rottachsee.jpg", imgAlt: "Aerial view of the Rottachsee",
     gkd: {
       temp:  "seen/wassertemperatur/iller_lech/rottachsee-11444001",
       level: "seen/wasserstand/iller_lech/rottachsee-11444001",
@@ -58,16 +60,19 @@ const LAKES = [
   },
   {
     id: "gruentensee", name: "Grüntensee", alt: 873, area: 1.66, depth: 14,
+    img: "images/free/gruentensee.jpg", imgAlt: "Aerial view of the Grüntensee",
     gkd: { level: "seen/wasserstand/iller_lech/gruentensee-seepegel-12403000" },
     note: "Near Oy-Mittelberg",
   },
   {
     id: "engeratsgundsee", name: "Engeratsgundsee", alt: 1876, area: 0.035, depth: 9,
+    img: "images/free/engeratsgundsee.jpg", imgAlt: "Engeratsgundsee below the Großer Daumen",
     gkd: { temp: "seen/wassertemperatur/iller_lech/engeratsgundsee-11422003" },
     note: "High-alpine lake below the Großer Daumen, Oberstdorf",
   },
   {
     id: "laufbichelsee", name: "Laufbichelsee", alt: 2029, area: 0.03, depth: 8,
+    img: "images/free/laufbichelsee.jpg", imgAlt: "Laufbichelsee in the Allgäu high Alps",
     gkd: { temp: "seen/wassertemperatur/iller_lech/laufbichelsee-11422006" },
     note: "One of the highest gauged lakes in Germany, Allgäu Alps",
   },
@@ -76,22 +81,31 @@ const LAKES = [
     img: "images/free/alpsee_aerial.jpg", imgAlt: "Aerial view of the Alpsee near Immenstadt",
     note: "Largest natural lake in the Allgäu" },
   { id: "bannwaldsee", name: "Bannwaldsee", alt: 786, area: 2.27, depth: 12,
+    img: "images/free/bannwaldsee.jpg", imgAlt: "Bannwaldsee near Schwangau with mountain backdrop",
     note: "Near Schwangau, views of Neuschwanstein" },
   { id: "hopfensee", name: "Hopfensee", alt: 961, area: 1.94, depth: 10,
+    img: "images/free/hopfensee.jpg", imgAlt: "Aerial view of the Hopfensee from the south",
     note: "Warm bathing lake at Hopfen am See" },
   { id: "weissensee", name: "Weissensee", alt: 927, area: 1.34, depth: 25,
+    img: "images/free/weissensee.jpg", imgAlt: "Aerial view of the Weissensee from the southeast",
     note: "Fjord-like lake near Füssen" },
   { id: "niedersonthofener-see", name: "Niedersonthofener See", alt: 704, area: 1.35, depth: 13,
+    img: "images/free/niedersonthofener-see.jpg", imgAlt: "Aerial view of Niedersonthofener See from the east",
     note: "Near Waltenhofen" },
   { id: "freibergsee", name: "Freibergsee", alt: 931, area: 0.18, depth: 25,
+    img: "images/free/freibergsee.jpg", imgAlt: "Freibergsee above Oberstdorf",
     note: "Bathing lake above Oberstdorf" },
   { id: "alatsee", name: "Alatsee", alt: 796, area: 0.12, depth: 32,
+    img: "images/free/alatsee.jpg", imgAlt: "Aerial view of the Alatsee from the southwest",
     note: "Meromictic lake near Füssen" },
   { id: "christlessee", name: "Christlessee", alt: 916, area: 0.09, depth: 20,
+    img: "images/free/christlessee.jpg", imgAlt: "Christlessee in the Trettach valley near Oberstdorf",
     note: "In the Trettach valley, Oberstdorf" },
   { id: "schwaltenweiher", name: "Schwaltenweiher", alt: 813, area: 0.14, depth: 4,
+    img: "images/free/schwaltenweiher.jpg", imgAlt: "Schwaltenweiher near Seeg in the Ostallgäu",
     note: "Near Seeg, Ostallgäu" },
   { id: "eschacher-weiher", name: "Eschacher Weiher", alt: 905, area: 0.05, depth: 6,
+    img: "images/free/eschacher-weiher.jpg", imgAlt: "Eschacher Weiher in autumn near Buchenberg",
     note: "Near Buchenberg" },
 ];
 
@@ -425,34 +439,131 @@ function refreshWebcams() {
     new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 }
 
-/* ---------- demo trend chart (clearly labeled as demo) ---------- */
+/* ---------- long-term trend chart (real ERA5 data from the archive) ---------- */
 
-function renderTrendDemo() {
-  const years = [];
-  const vals = [];
-  for (let y = 1961; y <= 2025; y++) {
-    years.push(y);
-    // gentle warming signal + noise, purely illustrative
-    vals.push(14.6 + (y - 1961) * 0.028 + Math.sin(y * 1.7) * 0.9 + Math.sin(y * 5.3) * 0.4);
+/*
+ * Monthly mean temperatures, 1940–today, backfilled by pipeline/backfill_trends.py
+ * from the ERA5 reanalysis (Open-Meteo archive API) and refreshed monthly.
+ * The JSON lives in the repo: data/trends/<loc>.monthly.json
+ */
+const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const BASELINE_START = 1961, BASELINE_END = 1990;
+
+let trendChart = null;
+let trendMonth = 7;          // 1–12, or 0 for annual mean
+let trendData = null;        // { months: {"YYYY-MM": value} } for currentLoc
+const trendCache = {};
+
+async function loadTrend(locKey) {
+  if (trendCache[locKey]) { trendData = trendCache[locKey]; renderTrend(); return; }
+  const rel = `data/trends/${locKey}.monthly.json`;
+  const raw = `https://raw.githubusercontent.com/nicolaslekai/allgau/main/${rel}`;
+  for (const url of [rel, raw]) {
+    try {
+      const res = await fetch(url + "?r=" + Date.now());
+      if (res.ok) {
+        trendCache[locKey] = await res.json();
+        trendData = trendCache[locKey];
+        renderTrend();
+        return;
+      }
+    } catch { /* try next */ }
   }
-  new Chart(document.getElementById("trend-chart"), {
+  document.getElementById("trend-title").textContent =
+    "Trend data not archived yet — the pipeline backfills it monthly.";
+}
+
+/* yearly mean for the selected month (or annual mean for month 0) */
+function trendSeries() {
+  const byYear = {};
+  for (const [ym, v] of Object.entries(trendData.months)) {
+    const y = +ym.slice(0, 4), m = +ym.slice(5, 7);
+    if (trendMonth === 0) {
+      (byYear[y] = byYear[y] || []).push(v);
+    } else if (m === trendMonth) {
+      byYear[y] = [v];
+    }
+  }
+  const years = Object.keys(byYear).map(Number).sort((a, b) => a - b);
+  // annual mean only for years with all 12 months
+  const vals = years.map((y) =>
+    byYear[y].length === (trendMonth === 0 ? 12 : 1)
+      ? byYear[y].reduce((a, b) => a + b, 0) / byYear[y].length
+      : null);
+  return { years, vals };
+}
+
+function movingAverage(years, vals, half = 5) {
+  return years.map((_, i) => {
+    let s = 0, n = 0;
+    for (let j = i - half; j <= i + half; j++) {
+      if (j >= 0 && j < vals.length && vals[j] != null) { s += vals[j]; n++; }
+    }
+    return n ? +(s / n).toFixed(2) : null;
+  });
+}
+
+function linearTrend(years, vals) {
+  const pts = years.map((y, i) => [y, vals[i]]).filter(([, v]) => v != null);
+  const n = pts.length;
+  if (n < 10) return null;
+  const sx = pts.reduce((a, [x]) => a + x, 0), sy = pts.reduce((a, [, v]) => a + v, 0);
+  const sxx = pts.reduce((a, [x]) => a + x * x, 0), sxy = pts.reduce((a, [x, v]) => a + x * v, 0);
+  const slope = (n * sxy - sx * sy) / (n * sxx - sx * sx);
+  return { slope, delta: slope * (pts[n - 1][0] - pts[0][0]) };
+}
+
+function renderTrend() {
+  if (!trendData) return;
+  const { years, vals } = trendSeries();
+  const smooth = movingAverage(years, vals);
+  const trend = linearTrend(years, vals);
+
+  const label = trendMonth === 0 ? "Annual mean" : `Mean ${MONTH_NAMES[trendMonth - 1]}`;
+  const firstYear = years.find((_, i) => vals[i] != null);
+  const lastYear = [...years].reverse().find((_, i) => vals[years.length - 1 - i] != null);
+  document.getElementById("trend-title").textContent =
+    `${label} temperature · ${trendData.name} · ${firstYear}–${lastYear}`;
+
+  const base = (() => {
+    const b = years.map((y, i) => (y >= BASELINE_START && y <= BASELINE_END) ? vals[i] : null)
+      .filter((v) => v != null);
+    return b.length ? b.reduce((a, v) => a + v, 0) / b.length : null;
+  })();
+  const parts = [];
+  if (base != null) parts.push(`${BASELINE_START}–${BASELINE_END} mean: ${fmtDE(base)} °C`);
+  if (trend) parts.push(`linear trend: ${trend.delta >= 0 ? "+" : ""}${fmtDE(trend.delta)} °C since ${firstYear}`);
+  parts.push("ERA5 reanalysis via Open-Meteo · backfilled by the archive pipeline");
+  document.getElementById("trend-sub").textContent = parts.join("  ·  ");
+
+  const ctx = document.getElementById("trend-chart");
+  if (trendChart) trendChart.destroy();
+  trendChart = new Chart(ctx, {
     type: "line",
     data: {
       labels: years,
-      datasets: [{
-        label: "Mean July temperature °C (demo)",
-        data: vals.map((v) => v.toFixed(2)),
-        borderColor: "#7fb3c8",
-        backgroundColor: "rgba(127,179,200,0.15)",
-        fill: true,
-        pointRadius: 0,
-        tension: 0.3,
-      }],
+      datasets: [
+        {
+          label: `${label} °C (per year)`,
+          data: vals,
+          borderColor: "rgba(127,179,200,0.45)",
+          backgroundColor: "rgba(127,179,200,0.08)",
+          borderWidth: 1, pointRadius: 0, tension: 0.3, fill: true,
+        },
+        {
+          label: "11-year mean",
+          data: smooth,
+          borderColor: "#e8a04c",
+          backgroundColor: "#e8a04c",
+          borderWidth: 2.5, pointRadius: 0, tension: 0.35,
+        },
+      ],
     },
     options: {
       responsive: true,
+      interaction: { mode: "index", intersect: false },
       scales: {
-        x: { ticks: { color: "rgba(238,244,241,0.6)", maxTicksLimit: 10 },
+        x: { ticks: { color: "rgba(238,244,241,0.6)", maxTicksLimit: 12 },
              grid: { color: "rgba(255,255,255,0.06)" } },
         y: { ticks: { color: "rgba(238,244,241,0.6)" },
              grid: { color: "rgba(255,255,255,0.06)" },
@@ -460,6 +571,49 @@ function renderTrendDemo() {
       },
       plugins: { legend: { labels: { color: "rgba(238,244,241,0.8)" } } },
     },
+  });
+}
+
+/* ---------- hero wireframe reveal (cursor-follow) ---------- */
+
+/*
+ * The hero shows the Nebelhorn photograph; a wireframe render of the same
+ * scene (images/hero_wireframe.jpg, generated with the illustration pipeline)
+ * is unmasked inside a cursor-following zone. The layer only activates when
+ * the asset actually loads — without it, the hero is just the photo + grid.
+ */
+function initHeroWire() {
+  const hero = document.querySelector(".hero");
+  const wire = document.querySelector(".hero-wire");
+  if (!hero || !wire) return;
+  if (window.matchMedia("(hover: none), (prefers-reduced-motion: reduce)").matches) return;
+
+  const img = new Image();
+  img.onload = () => {
+    wire.style.setProperty("--hero-wire-img", `url("${img.src}")`);
+    hero.classList.add("wire-on");
+  };
+  img.src = "images/hero_wireframe.jpg";
+
+  let tx = 0.62, ty = 0.38, cx = tx, cy = ty, raf = null;
+  const tick = () => {
+    cx += (tx - cx) * 0.14;
+    cy += (ty - cy) * 0.14;
+    wire.style.setProperty("--mx", (cx * 100).toFixed(2) + "%");
+    wire.style.setProperty("--my", (cy * 100).toFixed(2) + "%");
+    const ret = document.querySelector(".hero-reticle");
+    if (ret) {
+      ret.style.setProperty("--mx", (cx * 100).toFixed(2) + "%");
+      ret.style.setProperty("--my", (cy * 100).toFixed(2) + "%");
+    }
+    if (Math.abs(tx - cx) > 0.0005 || Math.abs(ty - cy) > 0.0005) raf = requestAnimationFrame(tick);
+    else raf = null;
+  };
+  hero.addEventListener("pointermove", (e) => {
+    const r = hero.getBoundingClientRect();
+    tx = (e.clientX - r.left) / r.width;
+    ty = (e.clientY - r.top) / r.height;
+    if (!raf) raf = requestAnimationFrame(tick);
   });
 }
 
@@ -471,6 +625,16 @@ document.getElementById("location-switch").addEventListener("click", (e) => {
   document.querySelectorAll("#location-switch .chip").forEach((c) => c.classList.remove("active"));
   btn.classList.add("active");
   loadLocation(btn.dataset.loc);
+  loadTrend(btn.dataset.loc);
+});
+
+document.getElementById("month-switch").addEventListener("click", (e) => {
+  const btn = e.target.closest(".chip");
+  if (!btn) return;
+  document.querySelectorAll("#month-switch .chip").forEach((c) => c.classList.remove("active"));
+  btn.classList.add("active");
+  trendMonth = +btn.dataset.month;
+  renderTrend();
 });
 
 window.addEventListener("scroll", () => {
@@ -482,4 +646,5 @@ loadLakes();
 renderWebcams();
 refreshWebcams();
 setInterval(refreshWebcams, CAM_REFRESH_MS);
-renderTrendDemo();
+loadTrend(currentLoc);
+initHeroWire();
