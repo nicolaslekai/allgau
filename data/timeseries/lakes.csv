@@ -62,3 +62,15 @@ measured_at,lake,kind,value,unit,fetched_at
 22.07.2026 14:00,iller-sonthofen,temp,15.0,°C,2026-07-22T12:12:01+00:00
 22.07.2026 14:00,iller-sonthofen,level,57.0,cm,2026-07-22T12:12:01+00:00
 22.07.2026 14:00,iller-sonthofen,discharge,6.99,m³/s,2026-07-22T12:12:01+00:00
+22.07.2026 16:30,forggensee,level,780.68,m ü. NN,2026-07-22T14:34:18+00:00
+22.07.2026 16:30,bodensee,temp,24.7,°C,2026-07-22T14:34:18+00:00
+22.07.2026 16:30,bodensee,level,394.9,m ü. NN,2026-07-22T14:34:18+00:00
+22.07.2026 16:30,rottachsee,temp,23.0,°C,2026-07-22T14:34:18+00:00
+22.07.2026 16:30,rottachsee,level,849.18,m ü. NN,2026-07-22T14:34:18+00:00
+22.07.2026 16:30,gruentensee,level,876.03,m ü. NN,2026-07-22T14:34:18+00:00
+22.07.2026 16:30,iller-kempten,temp,17.5,°C,2026-07-22T14:34:18+00:00
+22.07.2026 16:30,iller-kempten,level,97.0,cm,2026-07-22T14:34:18+00:00
+22.07.2026 16:30,iller-kempten,discharge,17.2,m³/s,2026-07-22T14:34:18+00:00
+22.07.2026 16:30,iller-sonthofen,temp,16.9,°C,2026-07-22T14:34:18+00:00
+22.07.2026 16:30,iller-sonthofen,level,57.0,cm,2026-07-22T14:34:18+00:00
+22.07.2026 16:30,iller-sonthofen,discharge,6.99,m³/s,2026-07-22T14:34:18+00:00
