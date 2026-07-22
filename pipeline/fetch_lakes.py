@@ -15,6 +15,8 @@ import csv
 import json
 import os
 import re
+import sys
+import time
 import urllib.request
 from datetime import datetime, timezone
 
@@ -57,10 +59,19 @@ HEADER_RE = re.compile(
     r"<t[dh][^>]*>.*?</t[dh]>\s*<t[dh][^>]*>(.*?)</t[dh]>", re.S | re.I)
 
 
-def fetch(url):
-    req = urllib.request.Request(url, headers=UA)
-    with urllib.request.urlopen(req, timeout=30) as res:
-        return res.read().decode("utf-8", errors="replace")
+def fetch(url, retries=2):
+    """GET url with simple backoff; raises after the last failed attempt."""
+    last = None
+    for attempt in range(retries + 1):
+        try:
+            req = urllib.request.Request(url, headers=UA)
+            with urllib.request.urlopen(req, timeout=30) as res:
+                return res.read().decode("utf-8", errors="replace")
+        except Exception as e:
+            last = e
+            if attempt < retries:
+                time.sleep(10 * (attempt + 1))
+    raise last
 
 
 def parse_latest(html):
@@ -140,6 +151,13 @@ def main():
                 print(f"FAIL {lake:16s} {kind:5s} {e}")
         if entry:
             snapshot["lakes"][lake] = entry
+
+    if not snapshot["lakes"]:
+        # Every station failed (e.g. GKD outage or blocking). Keep the previous
+        # snapshot on disk so the website keeps serving last-good values, and
+        # fail the run loudly instead of committing an empty snapshot.
+        print("ERROR: all stations failed — keeping previous snapshot", file=sys.stderr)
+        sys.exit(1)
 
     with open(SNAPSHOT_FILE, "w", encoding="utf-8") as f:
         json.dump(snapshot, f, ensure_ascii=False, indent=2)
