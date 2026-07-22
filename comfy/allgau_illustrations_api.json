@@ -1,0 +1,77 @@
+{
+  "1": {
+    "class_type": "PrimitiveInt",
+    "inputs": { "value": 470010 },
+    "_meta": { "title": "SHARED SEED — Allgäu illustration set" }
+  },
+  "10": {
+    "class_type": "GeminiImage2Node",
+    "inputs": {
+      "prompt": "An automatic weather station in an Allgäu alpine pasture: white instrument shelter on a mast, anemometer and rain gauge, small solar panel, wooden fence and grazing meadow with high alpine peaks behind, soft morning light. Modern scientific illustration, clean flat vector style with soft gradients and fine line detail, deep-water blue and glacial turquoise palette, subtle topographic contour lines in the sky, calm and precise, no text, no labels, no watermark",
+      "model": "gemini-3-pro-image-preview",
+      "seed": ["1", 0],
+      "aspect_ratio": "3:2",
+      "resolution": "2K",
+      "response_modalities": "IMAGE"
+    },
+    "_meta": { "title": "Illustration: weather station" }
+  },
+  "11": {
+    "class_type": "SaveImage",
+    "inputs": { "images": ["10", 0], "filename_prefix": "allgau/weather_station" }
+  },
+  "20": {
+    "class_type": "GeminiImage2Node",
+    "inputs": {
+      "prompt": "A groundwater monitoring well in an Alpine meadow, cutaway view: a slim well pipe with protective cap above ground, descending through distinct soil and gravel layers into the bright blue saturated aquifer below, a thin sensor cable inside the pipe, meadow flowers and alpine peaks above ground. Modern scientific illustration, clean flat vector style with soft gradients and fine line detail, deep-water blue and glacial turquoise palette, subtle topographic contour lines, calm and precise, no text, no labels, no watermark",
+      "model": "gemini-3-pro-image-preview",
+      "seed": ["1", 0],
+      "aspect_ratio": "3:2",
+      "resolution": "2K",
+      "response_modalities": "IMAGE"
+    },
+    "_meta": { "title": "Illustration: groundwater well" }
+  },
+  "21": {
+    "class_type": "SaveImage",
+    "inputs": { "images": ["20", 0], "filename_prefix": "allgau/groundwater" }
+  },
+  "30": {
+    "class_type": "GeminiImage2Node",
+    "inputs": {
+      "prompt": "Satellite view of the Allgäu Alps rendered as a false-color vegetation index (NDVI) map seen straight from above: lush meadows in vivid turquoise, dense forests in deep teal, bare rock and high peaks in grey-blue, lakes glowing bright cyan, a subtle latitude-longitude grid overlay. Modern scientific illustration, clean flat style with soft gradients, deep-water blue and glacial turquoise palette, precise and calm, no text, no labels, no legend, no watermark",
+      "model": "gemini-3-pro-image-preview",
+      "seed": ["1", 0],
+      "aspect_ratio": "3:2",
+      "resolution": "2K",
+      "response_modalities": "IMAGE"
+    },
+    "_meta": { "title": "Illustration: NDVI satellite" }
+  },
+  "31": {
+    "class_type": "SaveImage",
+    "inputs": { "images": ["30", 0], "filename_prefix": "allgau/ndvi" }
+  },
+  "40": {
+    "class_type": "LoadImage",
+    "inputs": { "image": "nebelhorn_hero.jpg" },
+    "_meta": { "title": "Hero photo (Nebelhorn) — input for wireframe" }
+  },
+  "41": {
+    "class_type": "GeminiImage2Node",
+    "inputs": {
+      "prompt": "Transform this mountain photograph into a technical wireframe blueprint: luminous cyan-turquoise vector lines tracing every ridge, rock face, and contour of the mountain and the summit station, on a deep dark navy background, topographic survey style with fine elevation contour lines, glowing line work, keep exactly the same composition and viewpoint as the input photo, no text, no watermark",
+      "model": "gemini-3-pro-image-preview",
+      "seed": ["1", 0],
+      "images": ["40", 0],
+      "aspect_ratio": "auto",
+      "resolution": "2K",
+      "response_modalities": "IMAGE"
+    },
+    "_meta": { "title": "Hero wireframe (img2img)" }
+  },
+  "42": {
+    "class_type": "SaveImage",
+    "inputs": { "images": ["41", 0], "filename_prefix": "allgau/hero_wireframe" }
+  }
+}
