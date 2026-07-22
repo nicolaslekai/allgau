@@ -154,29 +154,61 @@ let currentLoc = "kempten";
 
 /* ---------- fetch + render ---------- */
 
+/*
+ * The 14-day forecast is the mean of three independent models — DWD ICON,
+ * ECMWF IFS and NOAA GFS — fetched in one Open-Meteo multi-model request
+ * (each daily variable comes back suffixed per model). Variables a model
+ * doesn't provide, or days beyond its horizon, are null and simply drop out
+ * of the average. UV, precipitation probability and sun times come from the
+ * hourly/best-match request, where they are actually computed.
+ */
+const FORECAST_DAYS = 14;
+const FC_MODELS = [
+  { id: "icon_seamless", name: "DWD ICON" },
+  { id: "ecmwf_ifs025",  name: "ECMWF IFS" },
+  { id: "gfs_seamless",  name: "NOAA GFS" },
+];
+const FC_AVG_VARS = [
+  "weather_code", "temperature_2m_max", "temperature_2m_min",
+  "precipitation_sum", "snowfall_sum", "sunshine_duration",
+  "wind_speed_10m_max", "wind_gusts_10m_max",
+];
+
+let forecast = null;     // { daily (averaged), raw (per-model), hourly }
+let selectedDay = -1;
+let dayChart = null;
+
+const fetchJson = (u) =>
+  fetch(u).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+
 async function loadLocation(key) {
   currentLoc = key;
   const loc = LOCATIONS[key];
   document.getElementById("forecast-loc").textContent = loc.name;
 
-  const weatherUrl =
-    `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}` +
+  const base = `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}` +
+    `&timezone=Europe%2FBerlin&forecast_days=${FORECAST_DAYS}`;
+
+  const mainUrl = base +
     `&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,surface_pressure,wind_speed_10m,wind_direction_10m` +
-    `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,snowfall_sum` +
-    `&timezone=Europe%2FBerlin&forecast_days=7`;
+    `&hourly=temperature_2m,precipitation,precipitation_probability,weather_code,wind_speed_10m,cloud_cover,freezing_level_height` +
+    `&daily=uv_index_max,precipitation_probability_max,sunrise,sunset`;
+
+  const modelsUrl = base +
+    `&daily=${FC_AVG_VARS.join(",")}` +
+    `&models=${FC_MODELS.map((m) => m.id).join(",")}`;
 
   const airUrl =
     `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${loc.lat}&longitude=${loc.lon}` +
     `&current=european_aqi,pm10,pm2_5,ozone,nitrogen_dioxide,sulphur_dioxide&timezone=Europe%2FBerlin`;
 
   try {
-    const [w, a] = await Promise.all([
-      fetch(weatherUrl).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }),
-      fetch(airUrl).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }),
-    ]);
-    renderWeather(w);
+    const [w, m, a] = await Promise.all([fetchJson(mainUrl), fetchJson(modelsUrl), fetchJson(airUrl)]);
+    forecast = { daily: averageDaily(m.daily, w.daily), raw: m.daily, hourly: w.hourly };
+    selectedDay = -1;
+    renderWeather(w.current, forecast.daily);
     renderAir(a);
-    renderForecast(w);
+    renderForecast();
     document.getElementById("updated-at").textContent =
       new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
   } catch (err) {
@@ -184,6 +216,30 @@ async function loadLocation(key) {
       `<div class="card"><p class="card-label">Live data unavailable</p>
        <p class="card-note">Could not reach Open-Meteo (${err.message}). Please reload to retry.</p></div>`;
   }
+}
+
+/* Collapse the per-model arrays into one averaged daily series. */
+function averageDaily(models, best) {
+  const d = { time: models.time };
+  for (const v of FC_AVG_VARS) {
+    d[v] = models.time.map((_, i) => {
+      const vals = FC_MODELS.map((m) => models[`${v}_${m.id}`]?.[i]).filter((x) => x != null);
+      if (!vals.length) return null;
+      if (v === "weather_code") {
+        // codes can't be averaged: prefer DWD ICON, else the most severe remaining
+        const icon = models[`weather_code_${FC_MODELS[0].id}`]?.[i];
+        return icon != null ? icon : Math.max(...vals);
+      }
+      return vals.reduce((a, b) => a + b, 0) / vals.length;
+    });
+  }
+  d.modelCount = models.time.map((_, i) =>
+    FC_MODELS.filter((m) => models[`temperature_2m_max_${m.id}`]?.[i] != null).length);
+  d.uv_index_max = best.uv_index_max;
+  d.precipitation_probability_max = best.precipitation_probability_max;
+  d.sunrise = best.sunrise;
+  d.sunset = best.sunset;
+  return d;
 }
 
 function card(label, value, unit, note) {
@@ -194,10 +250,9 @@ function card(label, value, unit, note) {
   </div>`;
 }
 
-function renderWeather(w) {
-  const c = w.current;
-  const d = w.daily;
+function renderWeather(c, d) {
   const [desc, icon] = WMO[c.weather_code] || ["—", "·"];
+  const snow = d.snowfall_sum && d.snowfall_sum[0];
   document.getElementById("weather-cards").innerHTML = [
     card("Temperature", c.temperature_2m.toFixed(1), "°C",
       `${icon} ${desc} · feels ${c.apparent_temperature.toFixed(1)}°`),
@@ -206,7 +261,7 @@ function renderWeather(w) {
     card("Pressure", c.surface_pressure.toFixed(0), "hPa", ""),
     card("UV index (max today)", d.uv_index_max[0].toFixed(1), "", uvNote(d.uv_index_max[0])),
     card("Precipitation", c.precipitation.toFixed(1), "mm",
-      d.snowfall_sum[0] > 0 ? `❄️ ${d.snowfall_sum[0].toFixed(1)} cm snow today` : "last hour"),
+      snow > 0 ? `❄️ ${snow.toFixed(1)} cm snow today` : "last hour"),
   ].join("");
 }
 
@@ -242,20 +297,32 @@ function aqiLabel(v) {
   return ["Very poor", "card-aqi-vpoor"];
 }
 
-function renderForecast(w) {
-  const d = w.daily;
+function renderForecast() {
+  const d = forecast.daily;
   const labels = d.time.map((t) =>
     new Date(t + "T12:00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric" }));
 
-  // day tiles
+  // day tiles — bergfex-style: icon, temps, sun hours, precipitation
   document.getElementById("forecast-strip").innerHTML = d.time.map((t, i) => {
     const [desc, icon] = WMO[d.weather_code[i]] || ["—", "·"];
+    const date = new Date(t + "T12:00:00");
     const pp = d.precipitation_probability_max[i];
-    return `<div class="day-tile" title="${desc}">
-      <p class="dow">${new Date(t + "T12:00:00").toLocaleDateString("en-GB", { weekday: "short" })}</p>
+    const rain = d.precipitation_sum[i];
+    const snow = d.snowfall_sum[i];
+    const sunH = d.sunshine_duration[i] != null ? d.sunshine_duration[i] / 3600 : null;
+    const precipTxt = snow > 0.1
+      ? `❄️ ${snow.toFixed(snow < 10 ? 1 : 0)} cm${pp != null ? ` · ${Math.round(pp)}%` : ""}`
+      : rain > 0.1
+        ? `💧 ${rain.toFixed(rain < 10 ? 1 : 0)} mm${pp != null ? ` · ${Math.round(pp)}%` : ""}`
+        : pp > 10 ? `💧 ${Math.round(pp)}%` : "&nbsp;";
+    return `<div class="day-tile${i === selectedDay ? " active" : ""}" data-day="${i}"
+                 role="button" tabindex="0" title="${desc} — click for details">
+      <p class="dow">${date.toLocaleDateString("en-GB", { weekday: "short" })}
+        <span class="date">${date.getDate()}.${date.getMonth() + 1}.</span></p>
       <p class="icon">${icon}</p>
       <p class="temps">${Math.round(d.temperature_2m_max[i])}° <span>${Math.round(d.temperature_2m_min[i])}°</span></p>
-      ${pp != null && pp > 0 ? `<p class="precip">💧 ${pp}%</p>` : `<p class="precip">&nbsp;</p>`}
+      <p class="sun">${sunH != null ? `☀️ ${sunH.toFixed(1)} h` : "&nbsp;"}</p>
+      <p class="precip">${precipTxt}</p>
     </div>`;
   }).join("");
 
@@ -267,11 +334,11 @@ function renderForecast(w) {
       labels,
       datasets: [
         {
-          type: "line", label: "High °C", data: d.temperature_2m_max,
+          type: "line", label: "High °C", data: d.temperature_2m_max.map((v) => v != null ? +v.toFixed(1) : null),
           borderColor: "#d9663f", backgroundColor: "#d9663f", tension: 0.35, yAxisID: "y",
         },
         {
-          type: "line", label: "Low °C", data: d.temperature_2m_min,
+          type: "line", label: "Low °C", data: d.temperature_2m_min.map((v) => v != null ? +v.toFixed(1) : null),
           borderColor: "#2f6f8f", backgroundColor: "#2f6f8f", tension: 0.35, yAxisID: "y",
         },
         {
@@ -287,6 +354,117 @@ function renderForecast(w) {
         y: { title: { display: true, text: "°C" }, grid: { color: "rgba(0,0,0,0.06)" } },
         y1: { position: "right", min: 0, max: 100, title: { display: true, text: "%" },
               grid: { drawOnChartArea: false } },
+      },
+      plugins: { legend: { position: "bottom" } },
+    },
+  });
+
+  renderDayDetail();
+}
+
+/* ---------- day detail (click a tile) ---------- */
+
+const fmtClock = (iso) => iso ? iso.slice(11, 16) : "—";
+
+function dayStat(icon, label, value) {
+  return `<div class="day-stat"><span class="ds-icon">${icon}</span>
+    <span class="ds-value">${value}</span><span class="ds-label">${label}</span></div>`;
+}
+
+function renderDayDetail() {
+  const panel = document.getElementById("day-detail");
+  if (selectedDay < 0 || !forecast) {
+    panel.hidden = true;
+    panel.innerHTML = "";
+    if (dayChart) { dayChart.destroy(); dayChart = null; }
+    return;
+  }
+  const i = selectedDay;
+  const d = forecast.daily;
+  const h = forecast.hourly;
+  const date = new Date(d.time[i] + "T12:00:00");
+  const [desc, icon] = WMO[d.weather_code[i]] || ["—", "·"];
+  const h0 = i * 24;                       // hourly arrays are aligned to local days
+  const hours = h.time.slice(h0, h0 + 24).map((t) => t.slice(11, 13) + "h");
+
+  // bergfex-style quarters of the day
+  const segs = [["Night", 3], ["Morning", 9], ["Afternoon", 15], ["Evening", 21]].map(([name, hh]) => {
+    const idx = h0 + hh;
+    const code = h.weather_code[idx];
+    const [sDesc, sIcon] = WMO[code] || ["—", "·"];
+    const rain = h.precipitation.slice(idx - 3, idx + 3).reduce((a, b) => a + (b || 0), 0);
+    return `<div class="day-seg" title="${sDesc}">
+      <p class="seg-name">${name}</p>
+      <p class="seg-icon">${sIcon}</p>
+      <p class="seg-temp">${h.temperature_2m[idx] != null ? Math.round(h.temperature_2m[idx]) + "°" : "—"}</p>
+      <p class="seg-rain">${rain > 0.1 ? "💧 " + rain.toFixed(1) + " mm" : "&nbsp;"}</p>
+    </div>`;
+  }).join("");
+
+  const sunH = d.sunshine_duration[i] != null ? (d.sunshine_duration[i] / 3600).toFixed(1) + " h" : "—";
+  const freezing = h.freezing_level_height && h.freezing_level_height[h0 + 12];
+  const gusts = d.wind_gusts_10m_max[i];
+  const stats = [
+    dayStat("🌅", "sunrise", fmtClock(d.sunrise[i])),
+    dayStat("🌇", "sunset", fmtClock(d.sunset[i])),
+    dayStat("☀️", "sunshine", sunH),
+    dayStat("🔆", "UV max", d.uv_index_max[i] != null ? d.uv_index_max[i].toFixed(1) : "—"),
+    dayStat("💧", "precipitation", `${(d.precipitation_sum[i] || 0).toFixed(1)} mm` +
+      (d.precipitation_probability_max[i] != null ? ` · ${Math.round(d.precipitation_probability_max[i])}%` : "")),
+    dayStat("💨", "wind", `${Math.round(d.wind_speed_10m_max[i])} km/h` +
+      (gusts != null ? ` · gusts ${Math.round(gusts)}` : "")),
+    d.snowfall_sum[i] > 0.1 ? dayStat("❄️", "fresh snow", `${d.snowfall_sum[i].toFixed(1)} cm`) : "",
+    freezing != null ? dayStat("🏔️", "0° line (midday)", `≈ ${Math.round(freezing / 50) * 50} m`) : "",
+  ].join("");
+
+  const spread = FC_MODELS.map((m) => {
+    const hi = forecast.raw[`temperature_2m_max_${m.id}`]?.[i];
+    const lo = forecast.raw[`temperature_2m_min_${m.id}`]?.[i];
+    if (hi == null) return `<span class="model-chip model-off">${m.name} · beyond horizon</span>`;
+    return `<span class="model-chip">${m.name} · ${Math.round(hi)}°/${Math.round(lo)}°</span>`;
+  }).join("");
+
+  panel.innerHTML = `
+    <div class="day-head">
+      <h3>${icon} ${date.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}</h3>
+      <button class="day-close" aria-label="Close day details">×</button>
+    </div>
+    <p class="day-sub">${desc} · ${Math.round(d.temperature_2m_max[i])}° / ${Math.round(d.temperature_2m_min[i])}°
+      · average of ${d.modelCount[i]} model${d.modelCount[i] === 1 ? "" : "s"}</p>
+    <div class="day-segments">${segs}</div>
+    <div class="day-stats">${stats}</div>
+    <div class="day-chart-wrap"><canvas id="day-chart" height="80"></canvas></div>
+    <div class="model-spread">${spread}</div>`;
+  panel.hidden = false;
+  panel.querySelector(".day-close").addEventListener("click", () => {
+    selectedDay = -1;
+    document.querySelectorAll(".day-tile.active").forEach((t) => t.classList.remove("active"));
+    renderDayDetail();
+  });
+
+  if (dayChart) dayChart.destroy();
+  dayChart = new Chart(document.getElementById("day-chart"), {
+    data: {
+      labels: hours,
+      datasets: [
+        {
+          type: "line", label: "°C", data: h.temperature_2m.slice(h0, h0 + 24),
+          borderColor: "#d9663f", backgroundColor: "rgba(217,102,63,0.08)",
+          tension: 0.35, pointRadius: 0, fill: true, yAxisID: "y",
+        },
+        {
+          type: "bar", label: "Precip. mm", data: h.precipitation.slice(h0, h0 + 24),
+          backgroundColor: "rgba(47,111,143,0.4)", yAxisID: "y1", borderRadius: 3,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: "index", intersect: false },
+      scales: {
+        y: { title: { display: true, text: "°C" }, grid: { color: "rgba(0,0,0,0.06)" } },
+        y1: { position: "right", beginAtZero: true, suggestedMax: 5,
+              title: { display: true, text: "mm" }, grid: { drawOnChartArea: false } },
       },
       plugins: { legend: { position: "bottom" } },
     },
@@ -692,6 +870,26 @@ document.getElementById("location-switch").addEventListener("click", (e) => {
   btn.classList.add("active");
   loadLocation(btn.dataset.loc);
   loadTrend(btn.dataset.loc);
+});
+
+function pickDay(tile) {
+  const i = +tile.dataset.day;
+  selectedDay = selectedDay === i ? -1 : i;
+  document.querySelectorAll(".day-tile").forEach((t) =>
+    t.classList.toggle("active", +t.dataset.day === selectedDay));
+  renderDayDetail();
+  if (selectedDay >= 0) {
+    document.getElementById("day-detail").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+}
+
+document.getElementById("forecast-strip").addEventListener("click", (e) => {
+  const tile = e.target.closest(".day-tile");
+  if (tile) pickDay(tile);
+});
+document.getElementById("forecast-strip").addEventListener("keydown", (e) => {
+  const tile = e.target.closest(".day-tile");
+  if (tile && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); pickDay(tile); }
 });
 
 document.getElementById("month-switch").addEventListener("click", (e) => {

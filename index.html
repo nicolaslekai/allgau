@@ -64,19 +64,24 @@
   </div>
 
   <div class="cards cards-air" id="air-cards" aria-live="polite"></div>
-  <p class="fine-print">Weather: Open-Meteo forecast API (DWD ICON model). Air quality: CAMS Europe via Open-Meteo. Values are model/grid data for the selected town, not a single station reading.</p>
+  <p class="fine-print">Weather: Open-Meteo (DWD ICON model for current conditions; the 14-day forecast averages DWD ICON, ECMWF IFS and NOAA GFS). Air quality: CAMS Europe via Open-Meteo. Values are model/grid data for the selected town, not a single station reading.</p>
 </section>
 
 <!-- ============ FORECAST ============ -->
 <section class="section section-alt" id="forecast">
   <div class="section-head">
-    <h2>Next 7 days</h2>
-    <p class="section-sub">Live forecast for <span id="forecast-loc">Kempten</span></p>
+    <h2>Next 14 days</h2>
+    <p class="section-sub">Live forecast for <span id="forecast-loc">Kempten</span> ·
+    average of three models (DWD ICON · ECMWF IFS · NOAA GFS) · click a day for details</p>
   </div>
   <div class="chart-wrap">
     <canvas id="forecast-chart" height="110"></canvas>
   </div>
   <div class="forecast-strip" id="forecast-strip"></div>
+  <div class="day-detail" id="day-detail" hidden></div>
+  <p class="fine-print">Daily values are the mean of three independent forecast models — DWD ICON (Germany),
+  ECMWF IFS (Europe) and NOAA GFS (USA) — via Open-Meteo. Beyond each model's horizon the average
+  continues with the remaining models; the second week is inherently less certain.</p>
 </section>
 
 <!-- ============ LAKES & WATER ============ -->
