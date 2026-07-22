@@ -49,6 +49,21 @@ STATIONS = {
     "laufbichelsee": {
         "temp": "seen/wassertemperatur/iller_lech/laufbichelsee-11422006",
     },
+    "grosser-alpsee": {
+        "level": "seen/wasserstand/iller_lech/buehl-11436003",
+    },
+    "bannwaldsee": {
+        "level": "seen/wasserstand/iller_lech/muehlberg-12315004",
+    },
+    "hopfensee": {
+        "level": "seen/wasserstand/iller_lech/vilsen-12311003",
+    },
+    "weissensee": {
+        "level": "seen/wasserstand/iller_lech/moos-12312006",
+    },
+    "niedersonthofener-see": {
+        "level": "seen/wasserstand/iller_lech/kurzberg-11452055",
+    },
 }
 
 # river id -> measurement kinds -> GKD station path (fluesse = rivers)

@@ -1,6 +1,9 @@
 /* Allgäu Environment — styles */
 
 :root {
+  /* opt out of forced dark mode (Chrome Auto Dark, Dark Reader) — the hero's
+     reveal layer gets color-inverted into a white blob otherwise */
+  color-scheme: only light;
   /* lake palette — glacial turquoise to deep-water blue */
   --lake: #114a63;
   --abyss: #082936;
