@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-07-22T14:34:18+00:00",
+  "fetched_at": "2026-07-22T16:19:54+00:00",
   "source": "GKD Bayern (gkd.bayern.de)",
   "license": "CC BY 4.0 — Datenquelle: Bayerisches Landesamt für Umwelt, www.lfu.bayern.de",
   "lakes": {
@@ -7,74 +7,74 @@
       "level": {
         "value": 780.68,
         "unit": "m ü. NN",
-        "measured_at": "22.07.2026 16:30"
+        "measured_at": "22.07.2026 18:15"
       }
     },
     "bodensee": {
       "temp": {
         "value": 24.7,
         "unit": "°C",
-        "measured_at": "22.07.2026 16:30"
+        "measured_at": "22.07.2026 18:15"
       },
       "level": {
         "value": 394.9,
         "unit": "m ü. NN",
-        "measured_at": "22.07.2026 16:30"
+        "measured_at": "22.07.2026 18:15"
       }
     },
     "rottachsee": {
       "temp": {
         "value": 23.0,
         "unit": "°C",
-        "measured_at": "22.07.2026 16:30"
+        "measured_at": "22.07.2026 18:15"
       },
       "level": {
         "value": 849.18,
         "unit": "m ü. NN",
-        "measured_at": "22.07.2026 16:30"
+        "measured_at": "22.07.2026 18:15"
       }
     },
     "gruentensee": {
       "level": {
         "value": 876.03,
         "unit": "m ü. NN",
-        "measured_at": "22.07.2026 16:30"
+        "measured_at": "22.07.2026 18:15"
       }
     }
   },
   "rivers": {
     "iller-kempten": {
       "temp": {
-        "value": 17.5,
+        "value": 17.7,
         "unit": "°C",
-        "measured_at": "22.07.2026 16:30"
+        "measured_at": "22.07.2026 18:15"
       },
       "level": {
-        "value": 97.0,
+        "value": 96.0,
         "unit": "cm",
-        "measured_at": "22.07.2026 16:30"
+        "measured_at": "22.07.2026 18:15"
       },
       "discharge": {
-        "value": 17.2,
+        "value": 16.7,
         "unit": "m³/s",
-        "measured_at": "22.07.2026 16:30"
+        "measured_at": "22.07.2026 18:15"
       }
     },
     "iller-sonthofen": {
       "temp": {
-        "value": 16.9,
+        "value": 17.2,
         "unit": "°C",
-        "measured_at": "22.07.2026 16:30"
+        "measured_at": "22.07.2026 18:15"
       },
       "level": {
-        "value": 57.0,
+        "value": 56.0,
         "unit": "cm",
-        "measured_at": "22.07.2026 16:30"
+        "measured_at": "22.07.2026 18:15"
       },
       "discharge": {
-        "value": 6.99,
+        "value": 6.63,
         "unit": "m³/s",
-        "measured_at": "22.07.2026 16:30"
+        "measured_at": "22.07.2026 18:15"
       }
     }
   }
