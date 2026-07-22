@@ -111,6 +111,28 @@ const LAKES = [
 
 /* ---------- webcams (Foto-Webcam.eu — free to embed with attribution) ---------- */
 
+/* Iller river gauges — same GKD feeds, archived by the pipeline alongside the lakes. */
+const RIVERS = [
+  {
+    id: "iller-kempten", name: "Iller — Kempten",
+    gkd: {
+      temp:      "fluesse/wassertemperatur/iller_lech/kempten-11402001",
+      level:     "fluesse/wasserstand/iller_lech/kempten-11402001",
+      discharge: "fluesse/abfluss/iller_lech/kempten-11402001",
+    },
+    note: "Main gauge on the Iller in Kempten, the Allgäu's largest town",
+  },
+  {
+    id: "iller-sonthofen", name: "Iller — Sonthofen",
+    gkd: {
+      temp:      "fluesse/wassertemperatur/iller_lech/sonthofen-11401009",
+      level:     "fluesse/wasserstand/iller_lech/sonthofen-11401009",
+      discharge: "fluesse/abfluss/iller_lech/sonthofen-11401009",
+    },
+    note: "Upper-course gauge south of the Iller gorge — cold alpine inflow",
+  },
+];
+
 const WEBCAMS = [
   { slug: "nebelhorn",            title: "Nebelhorn summit",                 place: "Oberstdorf · 2,224 m · view SE" },
   { slug: "fellhorn",             title: "Fellhorn summit",                  place: "Oberstdorf · 2,037 m · view SE" },
@@ -387,6 +409,49 @@ function lakeCard(l, live) {
   </article>`;
 }
 
+function riverCard(r, live) {
+  const stats = [];
+  if (live.temp) {
+    stats.push(`<p class="lake-stat">${fmtDE(live.temp.value)}°C
+      <span class="lake-dim">water temp · ${live.temp.measured_at}</span></p>`);
+  }
+  if (live.level) {
+    stats.push(`<p class="lake-stat small">${fmtDE(live.level.value, 0)} ${live.level.unit || "cm"}
+      <span class="lake-dim">level · ${live.level.measured_at}</span></p>`);
+  }
+  if (live.discharge) {
+    stats.push(`<p class="lake-stat small">${fmtDE(live.discharge.value, live.discharge.value < 10 ? 2 : 1)} m³/s
+      <span class="lake-dim">discharge</span></p>`);
+  }
+  const isLive = stats.length > 0;
+  return `<article class="river-card">
+    <div class="lake-body">
+      <h3>${r.name} ${isLive ? '<span class="live-badge"><span class="live-dot"></span>LIVE</span>' : ""}</h3>
+      ${isLive ? stats.join("") : '<p class="lake-stat small lake-nogauge">Gauge currently offline</p>'}
+      <p class="lake-note">${r.note}</p>
+      <p class="lake-src">Source: <a href="${GKD_BASE}${r.gkd.temp}/messwerte" target="_blank" rel="noopener">GKD Bayern</a>, 15-min values</p>
+    </div>
+  </article>`;
+}
+
+async function loadRivers(snapshotRivers) {
+  const grid = document.getElementById("river-grid");
+  if (!grid) return;
+  grid.innerHTML = RIVERS.map((r) => riverCard(r, {})).join("");
+
+  await Promise.all(RIVERS.map(async (r, i) => {
+    const live = {};
+    const snap = snapshotRivers[r.id] || {};
+    for (const kind of ["temp", "level", "discharge"]) {
+      if (snap[kind]) { live[kind] = snap[kind]; continue; }
+      // fallback: scrape GKD live through a CORS proxy
+      try { live[kind] = await gkdLatest(r.gkd[kind]); } catch { /* leave absent */ }
+    }
+    const cards = grid.children;
+    if (cards[i]) cards[i].outerHTML = riverCard(r, live);
+  }));
+}
+
 async function loadLakes() {
   const grid = document.getElementById("lake-grid");
   // render immediately with placeholders, then fill in live values as they arrive
@@ -395,6 +460,7 @@ async function loadLakes() {
   // 1) archived snapshot from the ingestion pipeline (fast, reliable, CORS-open)
   const snapshot = await loadLakesSnapshot();
   const snapshotLakes = snapshot ? snapshot.lakes : {};
+  loadRivers(snapshot && snapshot.rivers ? snapshot.rivers : {});
 
   await Promise.all(LAKES.map(async (l, i) => {
     if (!l.gkd) return;

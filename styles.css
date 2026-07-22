@@ -309,13 +309,18 @@ a { color: var(--glacier); }
 .day-tile .precip { font-size: 0.76rem; color: var(--glacier); }
 
 /* ---------- lakes ---------- */
-.lake-grid {
+.lake-grid, .river-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.4rem;
   margin-bottom: 1.4rem;
 }
-.lake-card {
+.water-subhead {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  margin: 2rem 0 0.9rem;
+}
+.lake-card, .river-card {
   background: var(--card);
   border-radius: var(--radius);
   overflow: hidden;

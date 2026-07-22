@@ -51,6 +51,20 @@ STATIONS = {
     },
 }
 
+# river id -> measurement kinds -> GKD station path (fluesse = rivers)
+RIVER_STATIONS = {
+    "iller-kempten": {
+        "temp":      "fluesse/wassertemperatur/iller_lech/kempten-11402001",
+        "level":     "fluesse/wasserstand/iller_lech/kempten-11402001",
+        "discharge": "fluesse/abfluss/iller_lech/kempten-11402001",
+    },
+    "iller-sonthofen": {
+        "temp":      "fluesse/wassertemperatur/iller_lech/sonthofen-11401009",
+        "level":     "fluesse/wasserstand/iller_lech/sonthofen-11401009",
+        "discharge": "fluesse/abfluss/iller_lech/sonthofen-11401009",
+    },
+}
+
 TAG_RE = re.compile(r"<[^>]+>")
 TABLE_RE = re.compile(r'<table[^>]*tblsort[^>]*>(.*?)</table>', re.S | re.I)
 ROW_RE = re.compile(r"<tr[^>]*>(.*?)</tr>", re.S | re.I)
@@ -104,7 +118,7 @@ def parse_latest(html):
                 return {"value": value, "unit": unit, "measured_at": measured_at}
             except ValueError:
                 continue
-        raise ValueError("row without numeric value")
+        # newest row still pending (value is "--") — fall through to older rows
     raise ValueError("no data row found")
 
 
@@ -134,25 +148,28 @@ def append_timeseries(rows):
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)
     fetched_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    snapshot = {"fetched_at": fetched_at, "source": "GKD Bayern (gkd.bayern.de)", "lakes": {}}
+    snapshot = {"fetched_at": fetched_at, "source": "GKD Bayern (gkd.bayern.de)",
+                "license": "CC BY 4.0 — Datenquelle: Bayerisches Landesamt für Umwelt, www.lfu.bayern.de",
+                "lakes": {}, "rivers": {}}
     ts_rows = []
 
-    for lake, kinds in STATIONS.items():
-        entry = {}
-        for kind, path in kinds.items():
-            url = BASE + path + "/messwerte"
-            try:
-                latest = parse_latest(fetch(url))
-                entry[kind] = latest
-                ts_rows.append([latest["measured_at"], lake, kind,
-                                latest["value"], latest["unit"], fetched_at])
-                print(f"OK   {lake:16s} {kind:5s} {latest['value']} {latest['unit']}  ({latest['measured_at']})")
-            except Exception as e:  # keep going; one failed station must not kill the run
-                print(f"FAIL {lake:16s} {kind:5s} {e}")
-        if entry:
-            snapshot["lakes"][lake] = entry
+    for group_name, stations in (("lakes", STATIONS), ("rivers", RIVER_STATIONS)):
+        for water, kinds in stations.items():
+            entry = {}
+            for kind, path in kinds.items():
+                url = BASE + path + "/messwerte"
+                try:
+                    latest = parse_latest(fetch(url))
+                    entry[kind] = latest
+                    ts_rows.append([latest["measured_at"], water, kind,
+                                    latest["value"], latest["unit"], fetched_at])
+                    print(f"OK   {water:16s} {kind:9s} {latest['value']} {latest['unit']}  ({latest['measured_at']})")
+                except Exception as e:  # keep going; one failed station must not kill the run
+                    print(f"FAIL {water:16s} {kind:9s} {e}")
+            if entry:
+                snapshot[group_name][water] = entry
 
-    if not snapshot["lakes"]:
+    if not snapshot["lakes"] and not snapshot["rivers"]:
         # Every station failed (e.g. GKD outage or blocking). Keep the previous
         # snapshot on disk so the website keeps serving last-good values, and
         # fail the run loudly instead of committing an empty snapshot.
