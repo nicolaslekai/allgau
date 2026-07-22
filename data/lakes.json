@@ -1,20 +1,13 @@
 {
-<<<<<<< HEAD
   "fetched_at": "2026-07-22T07:34:01+00:00",
-=======
-  "fetched_at": "2026-07-22T07:33:32+00:00",
->>>>>>> 6297ea3 (Iller river gauges, CC BY 4.0 attribution, doc v4; hero back to CSS wireframe reveal)
   "source": "GKD Bayern (gkd.bayern.de)",
+  "license": "CC BY 4.0 — Datenquelle: Bayerisches Landesamt für Umwelt, www.lfu.bayern.de",
   "lakes": {
     "forggensee": {
       "level": {
         "value": 780.69,
         "unit": "m ü. NN",
-<<<<<<< HEAD
         "measured_at": "22.07.2026 09:30"
-=======
-        "measured_at": "22.07.2026 09:15"
->>>>>>> 6297ea3 (Iller river gauges, CC BY 4.0 attribution, doc v4; hero back to CSS wireframe reveal)
       }
     },
     "bodensee": {
@@ -46,8 +39,6 @@
         "value": 876.03,
         "unit": "m ü. NN",
         "measured_at": "22.07.2026 09:30"
-<<<<<<< HEAD
-=======
       }
     }
   },
@@ -84,7 +75,6 @@
         "value": 7.36,
         "unit": "m³/s",
         "measured_at": "22.07.2026 09:15"
->>>>>>> 6297ea3 (Iller river gauges, CC BY 4.0 attribution, doc v4; hero back to CSS wireframe reveal)
       }
     }
   }
