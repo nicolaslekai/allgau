@@ -1,51 +1,51 @@
 {
-  "fetched_at": "2026-07-25T04:43:32+00:00",
+  "fetched_at": "2026-07-25T07:17:21+00:00",
   "source": "GKD Bayern (gkd.bayern.de)",
   "license": "CC BY 4.0 — Datenquelle: Bayerisches Landesamt für Umwelt, www.lfu.bayern.de",
   "lakes": {
     "forggensee": {
       "level": {
-        "value": 780.63,
+        "value": 780.62,
         "unit": "m ü. NN",
-        "measured_at": "25.07.2026 06:30"
+        "measured_at": "25.07.2026 09:00"
       }
     },
     "bodensee": {
       "temp": {
-        "value": 23.7,
+        "value": 23.6,
         "unit": "°C",
-        "measured_at": "25.07.2026 06:30"
+        "measured_at": "25.07.2026 09:00"
       },
       "level": {
         "value": 394.86,
         "unit": "m ü. NN",
-        "measured_at": "25.07.2026 06:30"
+        "measured_at": "25.07.2026 09:00"
       }
     },
     "rottachsee": {
       "temp": {
-        "value": 23.2,
+        "value": 23.3,
         "unit": "°C",
-        "measured_at": "25.07.2026 06:30"
+        "measured_at": "25.07.2026 09:00"
       },
       "level": {
-        "value": 849.0,
+        "value": 848.99,
         "unit": "m ü. NN",
-        "measured_at": "25.07.2026 06:30"
+        "measured_at": "25.07.2026 09:00"
       }
     },
     "gruentensee": {
       "level": {
         "value": 876.01,
         "unit": "m ü. NN",
-        "measured_at": "25.07.2026 06:30"
+        "measured_at": "25.07.2026 09:00"
       }
     },
     "grosser-alpsee": {
       "level": {
         "value": 724.82,
         "unit": "m ü. NN",
-        "measured_at": "25.07.2026 06:30"
+        "measured_at": "25.07.2026 09:00"
       }
     },
     "bannwaldsee": {
@@ -59,14 +59,14 @@
       "level": {
         "value": 783.81,
         "unit": "m ü. NN",
-        "measured_at": "25.07.2026 06:30"
+        "measured_at": "25.07.2026 08:45"
       }
     },
     "weissensee": {
       "level": {
         "value": 787.27,
         "unit": "m ü. NN",
-        "measured_at": "25.07.2026 06:30"
+        "measured_at": "25.07.2026 09:00"
       }
     },
     "niedersonthofener-see": {
@@ -80,36 +80,36 @@
   "rivers": {
     "iller-kempten": {
       "temp": {
-        "value": 17.0,
+        "value": 16.9,
         "unit": "°C",
-        "measured_at": "25.07.2026 06:30"
+        "measured_at": "25.07.2026 09:00"
       },
       "level": {
-        "value": 93.0,
+        "value": 89.0,
         "unit": "cm",
-        "measured_at": "25.07.2026 06:30"
+        "measured_at": "25.07.2026 09:00"
       },
       "discharge": {
-        "value": 15.3,
+        "value": 13.5,
         "unit": "m³/s",
-        "measured_at": "25.07.2026 06:30"
+        "measured_at": "25.07.2026 09:00"
       }
     },
     "iller-sonthofen": {
       "temp": {
-        "value": 12.2,
+        "value": 11.9,
         "unit": "°C",
-        "measured_at": "25.07.2026 06:30"
+        "measured_at": "25.07.2026 09:00"
       },
       "level": {
-        "value": 52.0,
+        "value": 53.0,
         "unit": "cm",
-        "measured_at": "25.07.2026 06:30"
+        "measured_at": "25.07.2026 09:00"
       },
       "discharge": {
-        "value": 5.38,
+        "value": 5.67,
         "unit": "m³/s",
-        "measured_at": "25.07.2026 06:30"
+        "measured_at": "25.07.2026 09:00"
       }
     }
   }
