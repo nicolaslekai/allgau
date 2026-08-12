@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-08-12T16:25:44+00:00",
+  "fetched_at": "2026-08-12T17:29:33+00:00",
   "source": "GKD Bayern (gkd.bayern.de)",
   "license": "CC BY 4.0 — Datenquelle: Bayerisches Landesamt für Umwelt, www.lfu.bayern.de",
   "lakes": {
@@ -79,11 +79,6 @@
   },
   "rivers": {
     "iller-kempten": {
-      "temp": {
-        "value": 21.1,
-        "unit": "°C",
-        "measured_at": "12.08.2026 16:45"
-      },
       "level": {
         "value": 79.0,
         "unit": "cm",
@@ -96,11 +91,6 @@
       }
     },
     "iller-sonthofen": {
-      "temp": {
-        "value": 19.7,
-        "unit": "°C",
-        "measured_at": "12.08.2026 16:45"
-      },
       "level": {
         "value": 43.0,
         "unit": "cm",
