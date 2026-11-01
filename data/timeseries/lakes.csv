@@ -16026,3 +16026,12 @@ measured_at,lake,kind,value,unit,fetched_at
 01.11.2026 02:45,iller-sonthofen,temp,7.0,°C,2026-11-01T01:54:13+00:00
 01.11.2026 02:45,iller-sonthofen,level,57.0,cm,2026-11-01T01:54:13+00:00
 01.11.2026 02:45,iller-sonthofen,discharge,7.47,m³/s,2026-11-01T01:54:13+00:00
+01.11.2026 09:30,hopfensee,level,783.84,m ü. NN,2026-11-01T08:48:23+00:00
+01.11.2026 05:15,weissensee,level,787.29,m ü. NN,2026-11-01T08:48:23+00:00
+01.11.2026 04:00,niedersonthofener-see,level,704.11,m ü. NN,2026-11-01T08:48:23+00:00
+01.11.2026 09:30,iller-kempten,temp,8.3,°C,2026-11-01T08:48:23+00:00
+01.11.2026 09:45,iller-kempten,level,94.0,cm,2026-11-01T08:48:23+00:00
+01.11.2026 09:45,iller-kempten,discharge,15.4,m³/s,2026-11-01T08:48:23+00:00
+01.11.2026 09:45,iller-sonthofen,temp,6.7,°C,2026-11-01T08:48:23+00:00
+01.11.2026 09:45,iller-sonthofen,level,57.0,cm,2026-11-01T08:48:23+00:00
+01.11.2026 09:45,iller-sonthofen,discharge,7.47,m³/s,2026-11-01T08:48:23+00:00
