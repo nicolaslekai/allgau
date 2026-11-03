@@ -1040,6 +1040,7 @@ fuessen,2026-06,15.4,ERA5/Open-Meteo
 fuessen,2026-07,17.3,ERA5/Open-Meteo
 fuessen,2026-08,21.2,ERA5/Open-Meteo
 fuessen,2026-09,16.8,ERA5/Open-Meteo
+fuessen,2026-10,16.5,ERA5/Open-Meteo
 kempten,1940-01,-8.8,ERA5/Open-Meteo
 kempten,1940-02,-1.95,ERA5/Open-Meteo
 kempten,1940-03,2.01,ERA5/Open-Meteo
@@ -2081,6 +2082,7 @@ kempten,2026-06,14.7,ERA5/Open-Meteo
 kempten,2026-07,16.6,ERA5/Open-Meteo
 kempten,2026-08,20.9,ERA5/Open-Meteo
 kempten,2026-09,16.2,ERA5/Open-Meteo
+kempten,2026-10,16.3,ERA5/Open-Meteo
 oberstdorf,1940-01,-8.2,ERA5/Open-Meteo
 oberstdorf,1940-02,-1.89,ERA5/Open-Meteo
 oberstdorf,1940-03,1.1,ERA5/Open-Meteo
@@ -3122,3 +3124,4 @@ oberstdorf,2026-06,15.3,ERA5/Open-Meteo
 oberstdorf,2026-07,16.7,ERA5/Open-Meteo
 oberstdorf,2026-08,20.7,ERA5/Open-Meteo
 oberstdorf,2026-09,15.8,ERA5/Open-Meteo
+oberstdorf,2026-10,15.9,ERA5/Open-Meteo
