@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-11-14T15:36:07+00:00",
+  "fetched_at": "2026-11-14T20:27:32+00:00",
   "source": "GKD Bayern (gkd.bayern.de)",
   "license": "CC BY 4.0 — Datenquelle: Bayerisches Landesamt für Umwelt, www.lfu.bayern.de",
   "lakes": {
@@ -7,45 +7,45 @@
       "level": {
         "value": 779.45,
         "unit": "m ü. NN",
-        "measured_at": "14.11.2026 16:30"
+        "measured_at": "14.11.2026 21:15"
       }
     },
     "bodensee": {
       "temp": {
-        "value": 10.2,
+        "value": 9.9,
         "unit": "°C",
-        "measured_at": "14.11.2026 16:30"
+        "measured_at": "14.11.2026 21:15"
       },
       "level": {
         "value": 394.52,
         "unit": "m ü. NN",
-        "measured_at": "14.11.2026 16:30"
+        "measured_at": "14.11.2026 21:15"
       }
     },
     "rottachsee": {
       "temp": {
-        "value": 8.4,
+        "value": 8.1,
         "unit": "°C",
-        "measured_at": "14.11.2026 16:30"
+        "measured_at": "14.11.2026 21:15"
       },
       "level": {
-        "value": 843.18,
+        "value": 843.19,
         "unit": "m ü. NN",
-        "measured_at": "14.11.2026 16:30"
+        "measured_at": "14.11.2026 21:15"
       }
     },
     "gruentensee": {
       "level": {
-        "value": 876.1,
+        "value": 876.09,
         "unit": "m ü. NN",
-        "measured_at": "14.11.2026 16:30"
+        "measured_at": "14.11.2026 21:15"
       }
     },
     "grosser-alpsee": {
       "level": {
-        "value": 724.88,
+        "value": 724.87,
         "unit": "m ü. NN",
-        "measured_at": "14.11.2026 16:30"
+        "measured_at": "14.11.2026 21:15"
       }
     },
     "bannwaldsee": {
@@ -57,9 +57,9 @@
     },
     "hopfensee": {
       "level": {
-        "value": 783.94,
+        "value": 783.93,
         "unit": "m ü. NN",
-        "measured_at": "14.11.2026 16:30"
+        "measured_at": "14.11.2026 21:15"
       }
     },
     "weissensee": {
@@ -80,36 +80,36 @@
   "rivers": {
     "iller-kempten": {
       "temp": {
-        "value": 5.8,
+        "value": 5.7,
         "unit": "°C",
-        "measured_at": "14.11.2026 16:30"
+        "measured_at": "14.11.2026 21:15"
       },
       "level": {
         "value": 118.0,
         "unit": "cm",
-        "measured_at": "14.11.2026 16:30"
+        "measured_at": "14.11.2026 21:15"
       },
       "discharge": {
         "value": 30.4,
         "unit": "m³/s",
-        "measured_at": "14.11.2026 16:30"
+        "measured_at": "14.11.2026 21:15"
       }
     },
     "iller-sonthofen": {
       "temp": {
-        "value": 5.6,
+        "value": 4.8,
         "unit": "°C",
-        "measured_at": "14.11.2026 16:30"
+        "measured_at": "14.11.2026 21:15"
       },
       "level": {
-        "value": 67.0,
+        "value": 66.0,
         "unit": "cm",
-        "measured_at": "14.11.2026 16:30"
+        "measured_at": "14.11.2026 21:15"
       },
       "discharge": {
-        "value": 11.9,
+        "value": 11.4,
         "unit": "m³/s",
-        "measured_at": "14.11.2026 16:30"
+        "measured_at": "14.11.2026 21:15"
       }
     }
   }
